@@ -15,8 +15,9 @@ using namespace std;
 class ListaCaratteri{
     protected:
     struct Nodo {
-    char nome;
-    Nodo *succ;
+        char nome;
+        Nodo *succ;
+        Nodo* prec;
     };
 
     Nodo* testa;
@@ -53,25 +54,28 @@ class ListaCaratteri{
                     aux=coda;
                     nuovo->succ=NULL;
                     aux->succ=nuovo; // nuovo ha il nuovo valore e punta a Null
+                    nuovo->prec=coda; // aggiorno il valore del precedente
                     coda=nuovo; // salvo la posizione della coda
 
 
 
                 }else {// se la testa è l'unico elemento
                     testa->succ=nuovo; // nuovo ha il nuovo valore e punta a Null
+                    nuovo->prec=testa; // aggiorno il valore riferito all'elemento precedente
                     coda=nuovo; // mi salvo la posizione della coda nel momento della creazione di quest'ultima
                 }
 
             }else { // inserisci in testa tenere conto testa unico elemento
-                Nodo* successivo;
-                successivo=testa->succ;
+
                 nuovo->succ=testa;
+                testa->prec=nuovo; // aggiorno il valore riferito al nodo precedente
                 testa=nuovo;
             }
 
         }else{// la lista è vuota
             testa= nuovo;
             coda=testa;
+            // con un unico elemento prec punta ancora a null
         }
     }
 
@@ -93,6 +97,7 @@ class ListaCaratteri{
                     if (aux->nome == c) {// se la lettera è quella giusta
                         if (precedente==aux) { // è la prima iterazione
                             testa=testa->succ; // rimozione ex nodo testa
+                            testa->prec=NULL; // impostato a nulla perchè è la testa
                             aux=testa;          // imposto aux e precedente per cominciare da una nuova testa
                             precedente=testa;
                             // non incremento aux visto che è stata creata una nuova testa
@@ -100,13 +105,15 @@ class ListaCaratteri{
                         }else { // non ci riferiamo alla testa
                             if (aux==coda) { // se l'elemento in questione è l'ultimo della lista
                                 precedente->succ=NULL; // rimuovo l'ultimo elemento
+                                coda->prec=NULL; // impostato a null per evitare che venga recuperato
                                 coda=precedente;
 
                                 rimosso= true;
                             }else { // se non è ne primo ne ultimo
                                 precedente->succ=aux->succ; // rimozione di un nodo
+                                aux->prec=NULL; // per non farlo recuperare neanche provando
                                 aux=aux->succ; // incremento
-
+                                aux->prec=precedente; // collegato al nodo precedente
                                 rimosso= true;
                             }
                         }
@@ -137,6 +144,8 @@ class ListaCaratteri{
                         if (precedente==aux) {
                             // primo ciclo iterativo
                             testa=testa->succ;
+                            testa->prec=NULL;
+
                             precedente->succ=NULL; // rimozione ex testa
                             aux->succ=NULL;
                             return true;
@@ -144,9 +153,13 @@ class ListaCaratteri{
                             if (aux==coda) { // se l'elemento in questione è l'ultimo della lista
                                 precedente->succ=NULL; // rimuovo l'ultimo elemento
                                 coda=precedente;
+                                aux->prec=NULL; // non servirebbe ma per far si che non venga riprestinato lo metto a null
                                 return true;
                             }else { // se non è ne primo ne ultimo
                                 precedente->succ=aux->succ; // rimozione di un nodo
+                                aux->prec=NULL; // per non farlo recuperare
+                                aux=aux->succ; // possibile causa errore
+                                aux->prec=precedente; // linkato al precedente
                                 return true;
                             }
 
@@ -219,6 +232,25 @@ class ListaCaratteri{
         return 0;
     }
 
+    bool controllaPalindroma() {
+        if (testa!=NULL) {
+            if (testa->succ!=NULL) {
+                Nodo* Taux=testa;
+                Nodo* Caux=coda;
+                for (int i=0; i<int(lunghezza()/2); i++) {
+                    if (Taux->nome!=Caux->nome) {
+                        return false;
+                    } // altrimenti va avanti finche non ne trova due diversi
+                    Caux=Caux->prec; // si mandano avanti i contatori
+                    Taux=Taux->succ;
+                } return true; // se esce dal ciclo significa che sono uguali/ speculati / palindromi
+            }return true; // un solo elemento
+        }return false; // lista vuota
+    }
+
+
+
+
     /*sovraccarico dell'operatore << per permettere la stampa della lista
      *
      *
@@ -258,7 +290,7 @@ class ListaCaratteri{
                 // faccio partire due indici, uno che parte dlla coda uno che parte dalla testa
                 Nodo* precTesta=lc.testa;
                 Nodo* succCoda=lc.coda;
-                Nodo* aux=
+
 
                 char appoggio;
                 for (int i=0; i<int(lc.lunghezza()/2) ; i++) {
@@ -266,8 +298,8 @@ class ListaCaratteri{
                     appoggio=precTesta->nome;       // scambio i
                     precTesta->nome=succCoda->nome; // nomi dei
                     succCoda->nome=appoggio;        // due puntatori
-                    precTesta=precTesta->succ;
-                    ap
+                    precTesta=precTesta->succ;     // mando avanti il contatore che parte dalla testa
+                    succCoda=succCoda->prec;       // mando avanti il contatore che parte dalla coda
                 }
             }
         }

@@ -59,10 +59,15 @@ int main() {
                 lc.inserisci(ch,false);
                 conta++;
             }
+            if (lc.controllaPalindroma()) {
+                cout<<"la lista e palindroma"<<endl;
 
+            }else {
+                cout<<"lista non palindroma"<<endl;
+            }
             while (exit==false){
                 do{
-                    cout<<"1) stampa"<<endl<<"2) rimuovi e stampa "<<endl<<"3) rimuovi tutti e stampa"<<endl<<"4) reinserisci 3 valori"<<endl<<"5) inserisci nuova lista e confronta con precedente"<<endl<<"6) confronta le due liste"<<"7) DISTRUGGI TUTTE"<<endl<<endl<<"8) esci"<<endl<<endl;
+                    cout<<"1) stampa"<<endl<<"2) rimuovi e stampa "<<endl<<"3) rimuovi tutti e stampa"<<endl<<"4) reinserisci 3 valori + check palindromo"<<endl<<"5) inserisci nuova lista e confronta con precedente"<<endl<<"6) confronta le due liste"<<endl<<"7) iverti lista 1"<<endl<<"8) esci"<<endl<<endl;
                     cin>>risposta;
                 }while (risposta!='1'&&risposta!='2'&&risposta!='3'&&risposta!='4'&&risposta!='5'&&risposta!='6'&&risposta!='7');
                 switch (risposta) {
@@ -99,6 +104,12 @@ int main() {
                             lc.inserisci(ch,false);
                             conta++;
                         }
+                        if (lc.controllaPalindroma()) {
+                            cout<<"la lista e' palindroma"<<endl;
+
+                        }else {
+                            cout<<"lista non palindroma"<<endl;
+                        }
                         break;
 
                     case '5':
@@ -123,8 +134,10 @@ int main() {
                         }
                         break;
                     case '7':
-                        delete lc;
-                        delete lc2;
+                        ~lc;
+                        cout<<lc;
+                        // delete lc;
+                        // delete lc2;
                         break;
                     case '8':
                         exit=true;
