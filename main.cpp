@@ -15,39 +15,37 @@ int main() {
 
     switch(risposta) {
         case 's': case 'S':
-            risposta='n';
-            while (risposta!='y'&&risposta!='Y') {
-                cout<<"inserisci carattere da immettere nella lista : ";
-                cin>>ch;
-                do {
-                    cout<<endl<<"insrimento in testa o in coda t/c ?"<<endl;
-                    cin>>risposta;
-                }while(risposta!='t'&&risposta!='c'&&risposta!='T'&&risposta!='C');
-                switch(risposta) {
+            cout<<"--- PRIMA PARTE ---"<<endl
+            <<"Lista iniziale vuota :"<<lc<<endl;
+            lc.inserisci('a',true);
+            lc.inserisci('b',true);
+            lc.inserisci('c',true);
 
-                    case 't': case 'T' :
-                        lc.inserisci(ch,false);
-                        break;
-                    case 'c':  case 'C' :
-                        lc.inserisci(ch,true);
-                        break;
-                    default :
-                        cout<<"Illegal input"<<endl;
-                }
-                do {
-                    cout<<"vuoi uscire (y//n) ?";
-                    cin>>risposta;
-                } while (risposta!='y'&&risposta!='n'&&risposta!='Y'&&risposta!='N');
+            cout<<"Dopo l'inserimento in coda (a, b, c) :"<<lc<<endl;
+            lc.inserisci('z',false);
 
-
-            }
-            lc.stampaLista();
-            if (lc.rimuovi('a',false)) {
-                cout<<"almeno un elemento rimosso "<<endl;
-                lc.stampaLista();
-            }
+            cout<<"Dopo l'inserimento in testa (z) :"<<lc<<endl;
+            cout<<"Rimozione caratteri : 110"<<endl;
+            cout<<"Dopo la rimozione :"<<lc<<endl;
+            lc.rimuovi('z',true);
+            lc.rimuovi('a',true);
+            lc.rimuovi('b',true);
+            lc.rimuovi('c',true);
+            lc.inserisci('a',true);
+            lc.inserisci('c',true);
+            lc.inserisci('e',true);
+            lc.inserisci('c',true);
+            lc.inserisci('a',true);
+            lc.inserisci('r',true);
 
 
+
+            cout<<"Lista prima della rimozione dei caratteri 'a' e 'c' : "<<lc<<endl;
+            lc.rimuovi('a',true);
+            lc.rimuovi('c',true);
+
+            cout<<"Rimuovi tutti i caratteri 'a' e 'c' :"<<lc;
+            cout<<"--- SECONDA PARTE ---"<<endl;
             break;
 
         case 'v': case 'V':
@@ -67,10 +65,19 @@ int main() {
             }
             while (exit==false){
                 do{
-                    cout<<"1) stampa"<<endl<<"2) rimuovi e stampa "<<endl<<"3) rimuovi tutti e stampa"<<endl<<"4) reinserisci 3 valori + check palindromo"<<endl<<"5) inserisci nuova lista e confronta con precedente"<<endl<<"6) confronta le due liste"<<endl<<"7) iverti lista 1"<<endl<<"8) esci"<<endl<<endl;
+                    cout<<"1) stampa \t"<<"2) rimuovi e stampa "<<endl
+                    <<"3) rimuovi tutti e stampa \t"<<"4) reinserisci 3 valori + check palindromo"<<endl
+                    <<"5) inserisci nuova lista e confronta con precedente"<<endl
+                    <<"6) confronta le due liste\t"<<"7) inverti lista 1"<<endl
+                    <<"8) cerca sottostringa 2 in sottostringa 1 \t"<<"9) estrai n ultimo carattere e stampa valore del puntatore"<<endl
+                    <<"0) esci"<<endl;
                     cin>>risposta;
-                }while (risposta!='1'&&risposta!='2'&&risposta!='3'&&risposta!='4'&&risposta!='5'&&risposta!='6'&&risposta!='7');
+                }while (risposta!='1'&&risposta!='2'&&risposta!='3'&&risposta!='4'&&risposta!='5'&&risposta!='6'&&risposta!='7'&&risposta!='8'&&risposta!='9'&& risposta!='0');
                 switch (risposta) {
+                    case '0':
+                        exit=true;
+                        cout<<"Ciao bro";
+                        break;
                     case '1':
                         // lc.stampaLista();
                         cout<<lc;
@@ -121,7 +128,7 @@ int main() {
                             conta++;
                         }
                         lc2.stampaLista();
-                        lc2.lunghezza();
+                        cout<<"lunghezza :"<<int(lc2.lunghezza())<<endl;
 
 
 
@@ -140,8 +147,17 @@ int main() {
                         // delete lc2;
                         break;
                     case '8':
-                        exit=true;
-                        cout<<"Ciao bro";
+                        if (lc.cercaSottostringa(lc2)) {
+                            cout<<"sottostringa trovata "<<endl;
+                        }else cout<<"sottostringa non trovata "<<endl;
+                        break;
+                    case '9':
+                        int n;
+                        cout<<"inserisci n"<<endl;
+                        cin>>n;
+                        if (char* result= lc.estraiNultimoCarattere(n); result!=NULL) {
+                            cout<<"carattere trovato e rimosso :"<<result<<endl;
+                        }else cout<<"carattere non trovato"<<endl;
                         break;
                     default:
                         cout<<"Illegal input"<<endl;

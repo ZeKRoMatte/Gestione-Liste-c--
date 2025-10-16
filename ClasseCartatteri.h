@@ -25,9 +25,13 @@ class ListaCaratteri{
     public:
     ListaCaratteri() {
         coda=new Nodo;
+        coda->succ=NULL;
         coda=NULL;
+
         testa=new Nodo;
+        testa->prec=NULL;
         testa = NULL;
+
     }
 
 
@@ -70,6 +74,7 @@ class ListaCaratteri{
                 nuovo->succ=testa;
                 testa->prec=nuovo; // aggiorno il valore riferito al nodo precedente
                 testa=nuovo;
+                testa->prec=NULL;
             }
 
         }else{// la lista è vuota
@@ -93,43 +98,44 @@ class ListaCaratteri{
             if (tutti) { // vanno rimossi tutti
                 bool rimosso=false;
                 precedente=aux;
+                int conta=0;
+                int l = lunghezza(); // memorizzo la lunghezza inizizle
                 do {
-                    if (aux->nome == c) {// se la lettera è quella giusta
-                        if (precedente==aux) { // è la prima iterazione
-                            testa=testa->succ; // rimozione ex nodo testa
-                            testa->prec=NULL; // impostato a nulla perchè è la testa
-                            aux=testa;          // imposto aux e precedente per cominciare da una nuova testa
-                            precedente=testa;
-                            // non incremento aux visto che è stata creata una nuova testa
-                            rimosso=true;
-                        }else { // non ci riferiamo alla testa
-                            if (aux==coda) { // se l'elemento in questione è l'ultimo della lista
-                                precedente->succ=NULL; // rimuovo l'ultimo elemento
-                                coda->prec=NULL; // impostato a null per evitare che venga recuperato
-                                coda=precedente;
 
-                                rimosso= true;
-                            }else { // se non è ne primo ne ultimo
-                                precedente->succ=aux->succ; // rimozione di un nodo
-                                aux->prec=NULL; // per non farlo recuperare neanche provando
-                                aux=aux->succ; // incremento
-                                aux->prec=precedente; // collegato al nodo precedente
-                                rimosso= true;
+
+                        if (aux->nome==c) { // elementro trovato
+                            if (testa->nome==c) { // l'elemento trovato corrisponde alla testa
+
+                                testa=testa->succ; // imposto il successivo come nuova testa
+                                if (testa!=NULL)testa->prec=NULL; // scolelgo la nuova testa dalla precedente , solo se la lista non è vuota
+                                aux=testa;
+                                precedente=testa;
+                                rimosso=true;
+                                conta++; // incremento gli analizzati
+                            }else {
+                                if (coda->nome==c) { // l'elemento corrisponde alla coda
+                                    coda=coda->prec;
+                                    coda->succ=NULL;
+                                    aux=coda;
+                                    rimosso=true;
+                                    conta++; // conto quanti elementi ho nalizzato ,questo dovrebbe essere l'ultimo
+                                }else { // l'elemento non è ne testa ne coda
+                                    precedente->succ=aux->succ;
+                                    aux=aux->succ;
+                                    aux->prec=precedente;
+                                    rimosso=true;
+                                    conta++;
+                                }
                             }
+
+                        }else { // elemento non trovato , vado al prossimo
+                            aux=aux->succ;
+                            if (precedente!=NULL && precedente->succ!=aux) precedente=precedente->succ; // incremento precedente solo se il prossimo è diverso a aux
+                            conta++; // conto gli elementi analizzati
                         }
-                        if (aux->succ==NULL) break; // per uscire dal ciclo quando viene analizzato l'ultimo nodo
 
 
-                    }else {
-                        if (aux->succ==NULL) { // per uscire dal ciclo quando viene analizzato l'ultimo nodo
-                        break;
-                        }
-                        aux=aux->succ; // incremento se non viene riconosciuta la lettera in quella posizione
-                    }
-
-                    if (precedente->succ!=aux && precedente->succ!=aux->succ) precedente=precedente->succ; // se non è la prima iterazione devo far andare avanti anche il precedente
-
-                } while (true);
+                } while (conta<l);
 
 
                 if (rimosso) return true; // almeno un elemento rimosso
@@ -200,7 +206,7 @@ class ListaCaratteri{
                 cout<<aux->nome<<" -> @"<<endl;
 
             }else {
-                cout<<aux->nome<<" -> @"<<endl;
+                cout<<aux->nome<<"@"<<endl;
 
             }
 
@@ -232,6 +238,10 @@ class ListaCaratteri{
         return 0;
     }
 
+    /*controlla se la la lista è speculare o palindroma
+     * @return true lista palindroma
+     * @return false lista non palindroma
+     */
     bool controllaPalindroma() {
         if (testa!=NULL) {
             if (testa->succ!=NULL) {
@@ -245,11 +255,98 @@ class ListaCaratteri{
                     Taux=Taux->succ;
                 } return true; // se esce dal ciclo significa che sono uguali/ speculati / palindromi
             }return true; // un solo elemento
+
         }return false; // lista vuota
     }
 
+    /*cerca nella lista una sottolissta di caratteri passata come parametro
+     * Listacaratteri lc parametro corrispondente alla lista da ricercare
+     * @return true sottostringa trovata
+     * @ return false sottostriga non trovata
+     */
+    bool cercaSottostringa(ListaCaratteri lc) {
+        if (testa!=NULL) { // se la lista non è vuota
+            Nodo* aux=testa;
+            Nodo* lcaux= lc.testa;
+            int l= lc.lunghezza();
+            int conta=0;
+            for (int i=0; i<lunghezza(); i++) { // ciclo la lista
+                if (aux->nome== lcaux->nome) {  // controllo se il primo elemento è presente
+                    conta=1; // memorizzo quante volte ho trovato la corrispondenza
+                    aux=aux->succ; // controllo se i successivi rispettano la successione
+                    lcaux=lcaux->succ;
+                    while (aux->nome==lcaux->nome && conta<=l) {
+                        conta++; // conto quante corrispondenze trovo
+                        if (lcaux->succ==NULL) break;
+
+                        aux=aux->succ; // controllo se i successivi rispettano la successione
+                        lcaux=lcaux->succ;
 
 
+                    }
+                    if (conta==l) { // la sottostringa è stata trovata
+                        return true;
+                    }else { // la sottostringa non è stata trovata
+                        conta=0; // resetto il contatore
+                    }
+                }else { // se non è uguale continuo ad andare avanti nella lista
+                    aux=aux->succ;
+                }
+            } return false ; // se il programma esce dal for significa che la sottostringa non è stata trovata
+        } return false ;// se la lista è vuota
+    }
+
+
+    /*Rimuove l'ennesimo carattere partendo dall coda e ritorna un puntatore alla lettera
+     *int n numero posizione cercata
+     * @ return i puntatore al valore trovato
+     *
+     */
+    char* estraiNultimoCarattere(int n) {
+        if (testa!=NULL) {// la lista non è vuota
+            char* i;
+            char contenitore;
+            if (testa->succ!=NULL) {// se testa non è l'unico elemento
+                if (lunghezza()>=n) { // se n rientra nella lista
+                    Nodo* aux=coda;
+                    Nodo* precedente= coda->prec;
+                    if (n==lunghezza()) { // se n è = alla lunghezza della lista
+                        contenitore=testa->nome;
+                        i=&contenitore;
+                        testa=testa->succ; // rimuovo la vecchia testa
+                        testa->prec=NULL;
+                        return i;
+                    }else { // se n non si riferisce alla testa
+                        for (int j =1; j<n; j++) {
+                            precedente=precedente->prec;
+                            aux=aux->prec;
+                        }
+                        contenitore=aux->nome;
+                        precedente->succ=aux->succ; // elimino il valore trovato
+                        if (aux==coda) { // se aux era l'ultimo elemento
+                            coda=precedente;
+                        }else {
+                            aux=aux->succ;
+                            aux->prec=precedente;
+                        }
+
+                        i=&contenitore;;
+
+                        return i;
+                    }
+
+                }else return NULL; // n non rientra nella lista
+            }else {   // se testa è l'unico elemento
+                if (n==1) { // se vuole l'ultimo elemento ritorno l'unico valore che c'è
+                    contenitore=testa->nome;
+                    i=&contenitore;
+                    testa=NULL; // cancello l'elemento
+                    coda=testa;
+                    return i;
+                }else return NULL; // se c'è un solo elemento e n!=1 l'elemento non esiste
+            }
+        }return NULL; // se la lista è vuota
+    }
 
     /*sovraccarico dell'operatore << per permettere la stampa della lista
      *
@@ -274,7 +371,7 @@ class ListaCaratteri{
             }
 
         }else {
-            os<<"-> @"<<endl;
+            os<<"@"<<endl;
         }
         return os;
     }
